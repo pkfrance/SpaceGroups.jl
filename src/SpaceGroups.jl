@@ -1,5 +1,10 @@
 module SpaceGroups
 
-# Write your package code here.
+import StaticArrays: SMatrix,SVector
+
+export SpaceGroup, SpaceGroupElement
+
+include("finitegroup.jl")
+include("spacegroup.jl")
 
 end

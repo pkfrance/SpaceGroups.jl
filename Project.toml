@@ -1,7 +1,10 @@
 name = "SpaceGroups"
 uuid = "c9e7fe64-f4ce-462e-96f2-f923a4d16e38"
-authors = ["pkfrance <pkfrance@yahoo.com> and contributors"]
+authors = ["Pavel Kalugin <pkfrance@yahoo.com> and contributors"]
 version = "0.1.0"
+
+[deps]
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
 [compat]
 julia = "1"
