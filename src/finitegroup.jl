@@ -14,9 +14,9 @@ function generate_(gen)
     e = Set(gen)
     last = e
     while true
-        found = setdiff(Set(x * y for x in gen, y in last), e)
+        found = setdiff((x * y for x in gen, y in last), e)
         if isempty(found) break end
-        e = union(e, found)
+        union!(e, found)
         last = found
     end
     e
