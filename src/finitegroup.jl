@@ -11,7 +11,8 @@ struct FiniteGroup{E <: GroupElement}
 end
 
 function generate_(gen)
-    e = Set(gen)
+    identity=eltype(gen)()
+    e = Set((identity,)) 
     last = e
     while true
         found = setdiff((x * y for x in gen, y in last), e)
