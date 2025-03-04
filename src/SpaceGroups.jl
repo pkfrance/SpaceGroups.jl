@@ -2,7 +2,7 @@ module SpaceGroups
 
 import StaticArrays: SMatrix,SVector
 
-export SpaceGroup, SpaceGroupElement
+export SpaceGroupQuotient, SpaceGroupElement
 
 include("finitegroup.jl")
 include("spacegroup.jl")

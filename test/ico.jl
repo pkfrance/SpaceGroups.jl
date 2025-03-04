@@ -49,22 +49,22 @@ s5_1 = SpaceGroupElement(r5, t1)
 s5_2 = SpaceGroupElement(r5, t2)
 
     @testset "Symmorphic non-centrosymmetric group" begin
-        PI=SpaceGroup([s3,s5])
+        PI=SpaceGroupQuotient([s3,s5])
         @test length(PI)==60
     end
 
     @testset "Symmorphic centrosymmetric group" begin
-        PIh=SpaceGroup([s3,s5,sc])
+        PIh=SpaceGroupQuotient([s3,s5,sc])
         @test length(PIh)==120
     end
 
     @testset "Non-symmorphic non-centrosymmetric group" begin
-        PI_n=SpaceGroup([s3,s5_1])
+        PI_n=SpaceGroupQuotient([s3,s5_1])
         @test length(PI_n)==60
     end
 
     @testset "Non-symmorphic centrosymmetric group" begin
-        PIh_n=SpaceGroup([s3, s5_2, sc])
+        PIh_n=SpaceGroupQuotient([s3, s5_2, sc])
         @test length(PIh_n)==120
     end    
 end
