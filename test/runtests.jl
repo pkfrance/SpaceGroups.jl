@@ -4,5 +4,5 @@ using SpaceGroups
 using Test
 
 @testset "SpaceGroups.jl" begin
-    include("ico.jl")
+    include("group_order.jl")
 end

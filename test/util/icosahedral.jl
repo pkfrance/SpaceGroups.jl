@@ -1,7 +1,9 @@
+# Define some space groups for icosahedral quasicrystals
+
 using StaticArrays
 
-@testset "Icosahedral symmetry" begin
-    
+
+############################## Groups of type "P" (primitive) ##############################
 # Three-fold rotation
 r3 = SMatrix{6,6}(
    [0 0 1 0 0 0;
@@ -48,23 +50,7 @@ sc = SpaceGroupElement(c, z)
 s5_1 = SpaceGroupElement(r5, t1)
 s5_2 = SpaceGroupElement(r5, t2)
 
-    @testset "Symmorphic non-centrosymmetric group" begin
-        PI=SpaceGroupQuotient([s3,s5])
-        @test length(PI)==60
-    end
-
-    @testset "Symmorphic centrosymmetric group" begin
-        PIh=SpaceGroupQuotient([s3,s5,sc])
-        @test length(PIh)==120
-    end
-
-    @testset "Non-symmorphic non-centrosymmetric group" begin
-        PI_n=SpaceGroupQuotient([s3,s5_1])
-        @test length(PI_n)==60
-    end
-
-    @testset "Non-symmorphic centrosymmetric group" begin
-        PIh_n=SpaceGroupQuotient([s3, s5_2, sc])
-        @test length(PIh_n)==120
-    end    
-end
+const PI=SpaceGroupQuotient([s3,s5]) # Symmorphic non-centrosymmetric group
+const PIh=SpaceGroupQuotient([s3,s5,sc]) # Symmorphic centrosymmetric group
+const PI_n=SpaceGroupQuotient([s3,s5_1]) # Non-symmorphic non-centrosymmetric group
+const PIh_n=SpaceGroupQuotient([s3,s5_2,sc]) # Non-symmorphic centrosymmetric group
