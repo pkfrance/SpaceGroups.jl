@@ -1,7 +1,7 @@
 module SpaceGroups
 
 import StaticArrays: SMatrix, SVector
-import LinearAlgebra: ⋅
+import LinearAlgebra: ⋅, I
 
 export SpaceGroupQuotient, SpaceGroupElement
 export WyckoffPosition
