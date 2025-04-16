@@ -157,6 +157,85 @@ function ∘(e1::SpaceGroupElement{N,T}, e2::SpaceGroupElement{N,T}) where {N,T<
 end
 
 """
+    @SGE(args...)
+"""
+macro SGE(args...)
+    if length(args) == 2
+        mat_expr, vec_expr = args
+        return quote
+            local _a = $(esc(mat_expr))
+            local _b = $(esc(vec_expr))
+            local _N = size(_a, 1)
+            local _T = eltype(_a)
+
+            if size(_a, 2) != _N
+                error("@SGE: matrix must be square")
+            end
+            if length(_b) != _N
+                error("@SGE: vector length must match matrix size")
+            end
+            if !(_T <: Integer)
+                error("@SGE: matrix element type must be a subtype of Integer")
+            end
+
+            SpaceGroupElement{_N, _T}(
+                SMatrix{_N, _N, _T}(_a),
+                SVector{_N, Rational{_T}}(_b)
+            )
+        end
+
+    elseif length(args) == 1
+        input_expr = args[0 + 1]  # safer than args[1] in macro hygiene context
+        return quote
+            local _x = $(esc(input_expr))
+            if ndims(_x) == 2
+                local _N = size(_x, 1)
+                local _T = eltype(_x)
+
+                if size(_x, 2) != _N
+                    error("@SGE: matrix must be square")
+                end
+                if !(_T <: Integer)
+                    error("@SGE: matrix element type must be a subtype of Integer")
+                end
+
+                local _b = zeros(Rational{_T}, _N)
+
+                SpaceGroupElement{_N, _T}(
+                    SMatrix{_N, _N, _T}(_x),
+                    SVector{_N, Rational{_T}}(_b)
+                )
+
+            elseif ndims(_x) == 1
+                local _N = length(_x)
+                local _T = Int  # You could make this smarter if needed
+                local _a = Matrix{_T}(I, _N, _N)
+
+                if !(eltype(_x) <: Rational)
+                    error("@SGE: vector elements must be Rational{T}")
+                end
+
+                SpaceGroupElement{_N, _T}(
+                    SMatrix{_N, _N, _T}(_a),
+                    SVector{_N, Rational{_T}}(_x)
+                )
+
+            else
+                error("@SGE: argument must be a matrix or vector")
+            end
+        end
+
+    else
+        error("@SGE: expected one or two arguments")
+    end
+end
+
+
+
+
+
+
+"""
     SpaceGroupQuotient{N,T} = FiniteGroup{SpaceGroupElement{N,T}}
 
     The factor group of the space group with respect to the subgroup of pure translations.

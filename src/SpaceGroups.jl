@@ -3,7 +3,7 @@ module SpaceGroups
 import StaticArrays: SMatrix, SVector
 import LinearAlgebra: ⋅, I
 
-export SpaceGroupQuotient, SpaceGroupElement
+export SpaceGroupQuotient, SpaceGroupElement, @SGE
 export WyckoffPosition
 export AffinePhase, ComplexOrbit, RealOrbit, ExtinctOrbit, FormalOrbit, PhysicalOrbit
 export make_orbit

@@ -42,6 +42,12 @@ struct FiniteGroup{E <: GroupElement}
     end
 end
 
+"""
+    FiniteGroup{E <: GroupElement}() where {E <: GroupElement}
+    Default constructor creates the trivial finite group with only the identity element.
+"""
+FiniteGroup{E}() where {E <: GroupElement} = FiniteGroup{E}(Set{E}())
+
 function generate_(gen)
     identity=eltype(gen)()
     e = Set((identity,)) 
