@@ -158,6 +158,32 @@ end
 
 """
     @SGE(args...)
+    A macro for creating `SpaceGroupElement` objects.
+    It can take either one or two arguments:
+    - If two arguments are provided, the first should be a matrix and the second a vector.
+      The macro will create a `SpaceGroupElement` with the given matrix and vector.
+    - If one argument is provided, it can be either a matrix or a vector.
+      If it's a matrix, the macro will create a `SpaceGroupElement` with the identity matrix
+      and a zero vector. If it's a vector, the macro will create a `SpaceGroupElement` with
+      the identity matrix and the given vector.
+    The macro will check the dimensions and types of the inputs to ensure they are valid.
+    # Arguments
+    - `args...`: The arguments to be passed to the macro. It can be either one or two arguments.
+    # Returns
+    - A `SpaceGroupElement` object created from the provided arguments.
+    # Example
+    ```julia
+    julia> @SGE([1 0; 0 -1], [1//3, 2//3])
+    SpaceGroupElement{2, Int64}([1 0; 0 -1], Rational{Int64}[1//3, 2//3])
+    ```
+    ```julia
+    julia> @SGE([1 0; 0 -1])
+    SpaceGroupElement{2, Int64}([1 0; 0 -1], Rational{Int64}[0, 0])
+    ```
+    ```julia
+    julia> @SGE([1//3, 2//3])
+    SpaceGroupElement{2, Int64}([1 0; 0 1], Rational{Int64}[1//3, 2//3])
+    ```
 """
 macro SGE(args...)
     if length(args) == 2
