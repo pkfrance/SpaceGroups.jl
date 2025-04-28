@@ -134,7 +134,7 @@ function stabilizer_quotient(w::WyckoffPosition{N, T}, G::SpaceGroupQuotient{N, 
     # Compute the quotient of the stabilizer group of a Wyckoff position with respect to translations
     s=Set{SpaceGroupElement{N, T}}()
     for g in G
-        if normalize(g.w) == normalize(w) # Select element acting on w by a lattice translation
+        if normalize(g*w) == normalize(w) # Select element acting on w by a lattice translation
             push!(s, g)
         end
     end
