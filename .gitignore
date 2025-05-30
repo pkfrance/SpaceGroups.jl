@@ -1,2 +1,7 @@
+<<<<<<< HEAD
 Manifest.toml
+=======
+/Manifest.toml
+data/*/Manifest.toml
+>>>>>>> 2bfe565578b443d560d3b43131e794293c11cd4f
 .vscode
