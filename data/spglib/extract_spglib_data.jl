@@ -1,4 +1,4 @@
-using Spglib
+using Spglib, JSON
 using SpaceGroups
 
 
@@ -48,4 +48,32 @@ end
 function sge_to_tuple_string(g::SpaceGroupElement{3,Int})::String
     t=join(string.(g.b), ", ")
     "($(g.a), [$t])"
+end
+
+function get_group_data(hall_number::Integer)::Dict{String, Any}
+    elements=get_elements(hall_number)
+    generators=greedy_generators(elements)
+    sgt=get_spacegroup_type(hall_number)
+    fields=fieldnames(typeof(sgt))
+    group_data=Dict{String, Any}()
+    for field in fields
+        group_data[string(field)]=getfield(sgt, field)
+    end
+    group_data["generators"]=[sge_to_tuple_string(g) for g in generators]
+    group_data["order"]=length(elements)
+    group_data
+end
+
+function save_groups3D()
+    data=Vector{Any}()
+    for hall_number in 1:530
+        gdata=get_group_data(hall_number)
+        push!(data, gdata)
+    end
+    # Save the data to a JSON file
+    script_dir = @__DIR__
+    json_file = joinpath(script_dir, "groups3D.json")
+    open(json_file, "w") do io
+        JSON.print(io, data, 4)
+    end
 end
