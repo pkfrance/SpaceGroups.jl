@@ -112,6 +112,14 @@ function make_orbit(k::SVector{N,T}, G::SpaceGroupQuotient{N,T})::FormalOrbit{N,
     end
 end
 
+# A convenience version of `make_orbit` that accepts an arbitrary vector type for `k`
+# instead of a stativ vector only.
+function make_orbit(k::AbstractVector{T}, G::SpaceGroupQuotient{N,T}) where {N,T<:Integer}
+    length(k) == N || throw(ArgumentError("Expected vector of length $N, got length $(length(k))"))
+    make_orbit(SVector{N,T}(k), G)
+end
+
+
 function Base.show(io::IO, ::MIME"text/plain", x::ComplexOrbit)
     print(io, "ComplexOrbit with $(length(x.aps)) elements")
 end
