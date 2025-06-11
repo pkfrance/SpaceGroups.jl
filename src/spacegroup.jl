@@ -257,7 +257,28 @@ macro SGE(args...)
 end
 
 
+function Base.show(io::IO, ::MIME"text/plain", x::SpaceGroupElement)
+    print(io, "SpaceGroupElement(\n  a = ")
+    show(io, x.a)
+    print(io, ",\n  b = [")
+    for (i, val) in enumerate(x.b)
+        i > 1 && print(io, ", ")
+        print(io, val)  # print each Rational cleanly
+    end
+    print(io, "]\n)")
+end
 
+function Base.show(io::IO, x::SpaceGroupElement)
+    # Used inside arrays, logging, etc.
+    print(io, "SGE(")
+    show(io, x.a)
+    print(io, ", [")
+    for (i, val) in enumerate(x.b)
+        i > 1 && print(io, ", ")
+        print(io, val)  # print each Rational cleanly
+    end
+    print(io, "])")
+end
 
 
 
@@ -274,4 +295,8 @@ end
     - `T<:Integer`: The type of the elements in the transformation matrix and translation vector.
 """
 const SpaceGroupQuotient{N,T} = FiniteGroup{SpaceGroupElement{N,T}}
+
+function Base.show(io::IO, ::MIME"text/plain", G::SpaceGroupQuotient{N,T}) where {N,T}
+    print(io, "SpaceGroupQuotient (dimension $N, order $(length(G.e)))")
+end
 
