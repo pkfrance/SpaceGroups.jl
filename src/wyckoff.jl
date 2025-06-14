@@ -33,7 +33,7 @@ end
 
 # Default constructor creates a generic Wyckoff position
 function WyckoffPosition{N, T}() where {N, T<:Integer}
-    WyckoffPosition(zero(SVector{N, T}), SMatrix{N,N,T}(I))
+    WyckoffPosition(zero(SVector{N, Rational{T}}), SMatrix{N,N,T}(I))
 end
 
 
@@ -56,7 +56,7 @@ julia> w.directions
 2×0 SMatrix{2, 0, Int64, 0} with indices SOneTo(2)×SOneTo(0)
 ```
 """
-function WyckoffPosition{N, T}(anchor::SVector{N, Rational{T}}) where {N, T<:Integer}
+function WyckoffPosition(anchor::SVector{N, Rational{T}}) where {N, T<:Integer}
     WyckoffPosition(anchor, SMatrix{N,0,T}())
 end
 
@@ -91,7 +91,7 @@ WyckoffPosition{2,Int64}(
 function *(e::SpaceGroupElement{N,T}, w::WyckoffPosition{N, T}) where {N, T<:Integer}
     anchor=e.a*w.anchor+e.b
     directions=e.a*w.directions
-    WyckoffPosition{N,T}(anchor, directions)
+    WyckoffPosition(anchor, directions)
 end
 
 """
@@ -133,8 +133,10 @@ Compute the quotient of the stabilizer group of a Wyckoff position (with respect
 function stabilizer_quotient(w::WyckoffPosition{N, T}, G::SpaceGroupQuotient{N, T})::SpaceGroupQuotient{N, T} where {N, T<:Integer}
     # Compute the quotient of the stabilizer group of a Wyckoff position with respect to translations
     s=Set{SpaceGroupElement{N, T}}()
+    w0, _ = normalize(w) 
     for g in G
-        if normalize(g*w) == normalize(w) # Select element acting on w by a lattice translation
+        u, _= normalize(g*w0)
+        if u == w0 # Check if the normalized Wyckoff position is invariant under the group element
             push!(s, g)
         end
     end
@@ -151,7 +153,7 @@ if the stabilizer group of `w` does not conserve more directions than the number
 # Returns
 - `true` if `w` is a valid special Wyckoff position for the space group quotient `G`, `false` otherwise.
 """
-function is_valid(w::WyckoffPosition{N, T}, G::SpaceGroupQuotient{N, T})::Bool where {N, T<:Integer}
+function is_valid_wyckoff(w::WyckoffPosition{N, T}, G::SpaceGroupQuotient{N, T})::Bool where {N, T<:Integer}
     s=[g.a-I for g in stabilizer_quotient(w, G)]
     # Check the dimension of the common kernel of all elements of `s`
     kernel_dim=N-rank(vcat(s...))
