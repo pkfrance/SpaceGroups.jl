@@ -30,6 +30,14 @@ AffinePhase(k::SVector{N,T}, ϕ::Rational{T}) where {N,T<:Integer} =
     AffinePhase{N,T}(k, ϕ)
 
 
+function Base.show(io::IO, ::MIME"text/plain", x::AffinePhase)
+    print(io, "AffinePhase(k = $(x.k), ϕ = $(x.ϕ))")
+end
+
+function Base.show(io::IO, x::AffinePhase)
+    print(io, "AP($(x.k), $(x.ϕ))")
+end
+
 """
     *(g::SpaceGroupElement, ap::AffinePhase{N,T}) where {N,T<:Integer}
 
@@ -102,4 +110,36 @@ function make_orbit(k::SVector{N,T}, G::SpaceGroupQuotient{N,T})::FormalOrbit{N,
         # the phase of each partial wave is already known up to a global phase:
         return ComplexOrbit([AffinePhase(k, d[k]) for k in keys(d)])
     end
+end
+
+# A convenience version of `make_orbit` that accepts an arbitrary vector type for `k`
+# instead of a stativ vector only.
+function make_orbit(k::AbstractVector{T}, G::SpaceGroupQuotient{N,T}) where {N,T<:Integer}
+    length(k) == N || throw(ArgumentError("Expected vector of length $N, got length $(length(k))"))
+    make_orbit(SVector{N,T}(k), G)
+end
+
+
+function Base.show(io::IO, ::MIME"text/plain", x::ComplexOrbit)
+    print(io, "ComplexOrbit with $(length(x.aps)) elements")
+end
+
+function Base.show(io::IO, x::ComplexOrbit)
+    print(io, "ComplexOrbit with $(length(x.aps)) elements")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", x::RealOrbit)
+    print(io, "RealOrbit with $(length(x.aps)) elements")
+end
+
+function Base.show(io::IO, x::RealOrbit)
+    print(io, "RealOrbit with $(length(x.aps)) elements")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", x::ExtinctOrbit)
+    print(io, "ExtinctOrbit with $(length(x.k)) elements")
+end
+
+function Base.show(io::IO, x::ExtinctOrbit)
+    print(io, "ExtinctOrbit with $(length(x.k)) elements")
 end

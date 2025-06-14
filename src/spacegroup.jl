@@ -27,28 +27,28 @@ The group action is given by the formula x ↦ a*x+b.
 ```julia
 julia> using StaticArrays
 
-julia> e1 = SpaceGroupElement{2,Int}(SMatrix{2,2,Int}([1 0; 0 1]))
-SpaceGroupElement{2,Int64}(
-  [1 0; 0 1],
-  [0, 0]
+julia> e1 = SpaceGroupElement(SMatrix{2,2,Int}([0 1; -1 0]))
+SpaceGroupElement(
+  a = [0 1; -1 0],
+  b = [0//1, 0//1]
 )
 
-julia> e2 = SpaceGroupElement{2,Int}(SVector{2,Int}([1, 1]))
-SpaceGroupElement{2,Int64}(
-  [1 0; 0 1],
-  [1, 1]
+julia> e2 = SpaceGroupElement(SVector{2,Int}([1, 1]))
+SpaceGroupElement(
+  a = [1 0; 0 1],
+  b = [1//1, 1//1]
 )
 
 julia> e1*e2
-SpaceGroupElement{2,Int64}(
-  [1 0; 0 1],
-  [1, 1]
+SpaceGroupElement(
+  a = [0 1; -1 0],
+  b = [1//1, -1//1]
 )
 
 julia> e1∘e2
-SpaceGroupElement{2,Int64}(
-  [1 0; 0 1],
-  [0, 0]
+SpaceGroupElement(
+  a = [0 1; -1 0],
+  b = [0//1, 0//1]
 )
 """
 struct SpaceGroupElement{N,T<:Integer} <: GroupElement
@@ -174,15 +174,24 @@ end
     # Example
     ```julia
     julia> @SGE([1 0; 0 -1], [1//3, 2//3])
-    SpaceGroupElement{2, Int64}([1 0; 0 -1], Rational{Int64}[1//3, 2//3])
+    SpaceGroupElement(
+      a = [1 0; 0 -1],
+      b = [1//3, 2//3]
+    )
     ```
     ```julia
     julia> @SGE([1 0; 0 -1])
-    SpaceGroupElement{2, Int64}([1 0; 0 -1], Rational{Int64}[0, 0])
+    SpaceGroupElement(
+      a = [1 0; 0 -1],
+      b = [0//1, 0//1]
+    )
     ```
     ```julia
     julia> @SGE([1//3, 2//3])
-    SpaceGroupElement{2, Int64}([1 0; 0 1], Rational{Int64}[1//3, 2//3])
+    SpaceGroupElement(
+      a = [1 0; 0 1],
+      b = [1//3, 2//3]
+    )
     ```
 """
 macro SGE(args...)
@@ -257,7 +266,28 @@ macro SGE(args...)
 end
 
 
+function Base.show(io::IO, ::MIME"text/plain", x::SpaceGroupElement)
+    print(io, "SpaceGroupElement(\n  a = ")
+    show(io, x.a)
+    print(io, ",\n  b = [")
+    for (i, val) in enumerate(x.b)
+        i > 1 && print(io, ", ")
+        print(io, val)  # print each Rational cleanly
+    end
+    print(io, "]\n)")
+end
 
+function Base.show(io::IO, x::SpaceGroupElement)
+    # Used inside arrays, logging, etc.
+    print(io, "SGE(")
+    show(io, x.a)
+    print(io, ", [")
+    for (i, val) in enumerate(x.b)
+        i > 1 && print(io, ", ")
+        print(io, val)  # print each Rational cleanly
+    end
+    print(io, "])")
+end
 
 
 
@@ -274,4 +304,8 @@ end
     - `T<:Integer`: The type of the elements in the transformation matrix and translation vector.
 """
 const SpaceGroupQuotient{N,T} = FiniteGroup{SpaceGroupElement{N,T}}
+
+function Base.show(io::IO, ::MIME"text/plain", G::SpaceGroupQuotient{N,T}) where {N,T}
+    print(io, "SpaceGroupQuotient (dimension $N, order $(length(G.e)))")
+end
 
