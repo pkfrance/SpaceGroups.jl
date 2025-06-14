@@ -1,11 +1,10 @@
 module SpaceGroups
 
 import StaticArrays: SMatrix, SVector
-import LinearAlgebra: ⋅, I, rank
-import Base: *, ∘
+import LinearAlgebra: ⋅, I
 
-export SpaceGroupQuotient, SpaceGroupElement, @SGE, @WP, ∘
-export WyckoffPosition, stabilizer_quotient, is_valid_wyckoff, normalize
+export SpaceGroupQuotient, SpaceGroupElement, @SGE
+export WyckoffPosition
 export AffinePhase, ComplexOrbit, RealOrbit, ExtinctOrbit, FormalOrbit, PhysicalOrbit
 export make_orbit
 
