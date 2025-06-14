@@ -202,3 +202,29 @@ function is_valid_wyckoff(w::WyckoffPosition{N, T}, G::SpaceGroupQuotient{N, T})
     end
     true
 end
+
+import Base: show, summary
+
+# Long form: used in REPL and when printed directly
+function Base.show(io::IO, ::MIME"text/plain", wp::WyckoffPosition{N, T}) where {N, T}
+    M = size(wp.directions, 2)
+
+    if M == N
+        print(io, "WyckoffPosition(dim=$N, generic)")
+    else
+        print(io, "WyckoffPosition(")
+        print(io, "anchor=", wp.anchor)
+        if M == 0
+            print(io, ", no parameters")
+        else
+            print(io, ", directions=", wp.directions)
+        end
+        print(io, ")")
+    end
+end
+
+# Short form: used in collections
+function Base.show(io::IO, wp::WyckoffPosition{N, T}) where {N, T}
+    M = size(wp.directions, 2)
+    print(io, "WP{$N,$M}")
+end
