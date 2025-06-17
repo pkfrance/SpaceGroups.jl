@@ -213,7 +213,12 @@ function Base.show(io::IO, ::MIME"text/plain", wp::WyckoffPosition{N, T}) where 
         print(io, "WyckoffPosition(dim=$N, generic)")
     else
         print(io, "WyckoffPosition(")
-        print(io, "anchor=", wp.anchor)
+        print(io, "anchor=[")
+        for (i, val) in enumerate(wp.anchor)
+            i > 1 && print(io, ", ")
+            print(io, val)  # print each Rational cleanly
+        end
+        print(io, "])")    
         if M == 0
             print(io, ", no parameters")
         else
