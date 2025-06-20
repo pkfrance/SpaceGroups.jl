@@ -46,8 +46,9 @@ For a given point in the reciprocal lattice, the package determines whether it c
 
 Until the package is officially registered, install it via the Julia `Pkg` REPL (press `]` in the Julia REPL to enter `Pkg` mode) with:
 
-```julia
-add https://github.com/pkfrance/SpaceGroups.jl
+```julia-repl
+julia> ]
+(@v1.10) pkg> add SpaceGroups
 ```
 
 ## Documentation
