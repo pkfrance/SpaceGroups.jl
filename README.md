@@ -81,7 +81,8 @@ julia> ]
 ```
 
 ## Documentation
-*Work in progress*. For now, please refer to the source code and docstrings.
+ - [DEV](https://pkfrance.github.io/SpaceGroups.jl/dev/): documentation for the development version.
+ - STABLE: *work in progress", waiting for the first release.
 
 ## Contributing
 Contributions, bug reports, and feature suggestions are welcome! Feel free to open an issue or a pull request.
