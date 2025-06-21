@@ -1,6 +1,6 @@
 # SpaceGroups.jl
 
-**SpaceGroups.jl** is a lightweight and efficient Julia package for handling crystallographic symmetry operations in any spatial dimension.
+**SpaceGroups.jl** is a lightweight Julia package for handling crystallographic symmetry operations in any spatial dimension.
 
 ---
 
@@ -8,15 +8,15 @@
 
 **SpaceGroups.jl** is built on the following principles:
 
-* **Lightweight and Self-Contained:** Depends only on Julia's standard library, ensuring easy integration and minimal overhead.
-* **Dimension-Agnostic:** Algorithms are designed to work generically in any dimension, not just for the conventional 2D or 3D cases.
-* **Performance-Focused:** Optimized for computational speed and efficiency.
+* **Lightweight and Self-Contained:** Depends only on Julia's standard library.
+* **Dimension-Agnostic:** All algorithms are designed to work generically in any dimension.
+* **Performance-Focused:** Uses `StaticArrays` under the hood.
 * **Exact Representation:** Symmetry operations are represented precisely using Julia's `Rational` type for fractional components, avoiding the inaccuracies of floating-point numbers.
 
 ## What SpaceGroups.jl is Not
 
 * **It is not a computer algebra system.** For tasks like enumerating all non-equivalent space groups in a given dimension, established tools like GAP are more suitable.
-* **It is not a space group database.** If you need a comprehensive database of crystallographic space groups, consider excellent alternatives such as [Crystalline.jl](https://github.com/thchr/Crystalline.jl) or [Spglib.jl](https://github.com/singularitti/Spglib.jl).
+* **It is not a space group database.** If you need a comprehensive database of crystallographic space groups, consider such excellent packages as [Crystalline.jl](https://github.com/thchr/Crystalline.jl) or [Spglib.jl](https://github.com/singularitti/Spglib.jl).
 
 ## Core Concepts
 
@@ -24,7 +24,7 @@
 
 The central type in the package is `SpaceGroupQuotient`, which represents the quotient of a space group by its translational subgroup. While this group is always isomorphic to the point group of the structure, the `SpaceGroupQuotient` retains sufficient information to reconstruct the full space group.
 
-* **Construction:** A `SpaceGroupQuotient` is instantiated from a list of its generators.
+* **Construction:** A `SpaceGroupQuotient` is instantiated from its generators.
 * **Eager Instantiation:** The full set of group elements is computed and stored upon creation.
     * ⚠️ **Note:** This approach may be memory-intensive in high-dimensional settings.
 
@@ -43,7 +43,7 @@ For any given point in the reciprocal lattice, the package can analyze its symme
 
 * A **Bragg peak** with an arbitrary phase.
 * A **Bragg peak** with a phase restricted to a sign difference.
-* An **extinct peak** (systematically forbidden by symmetry).
+* An **extinct peak** (forbidden by symmetry).
 
 ---
 
@@ -62,11 +62,11 @@ julia> g2 = @SGE([0 1 0 0; 1 0 0 0; 0 0 0 -1; 0 0 -1 0], [1//2, 1//2, 1//2, 1//2
 julia> G = SpaceGroupQuotient([g1, g2])
 SpaceGroupQuotient (dimension 4, order 16)
 
-# An allowed reflection
+# A reflection with restricted phase
 julia> make_orbit([1, 1, 0, 0], G)
 RealOrbit with 8 elements
 
-# A systematically extinct reflection
+# An extinct reflection
 julia> make_orbit([1, 0, 0, 0], G)
 ExtinctOrbit with 8 elements
 ```
