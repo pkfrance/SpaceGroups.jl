@@ -10,8 +10,6 @@ An element of a space group in N dimensions.
 - `N`: The dimension of the space.
 - `T<:Integer`: The type of the elements in the transformation matrix and translation vector.
 
-The group action is given by the formula x ↦ a*x+b.
-
 # Fields
 - `a::StaticArrays.SMatrix{N,N,T}`: The linear transformation matrix.
 - `b::StaticArrays.SVector{N, Rational{T}}`: The translation vector.
@@ -20,36 +18,31 @@ The group action is given by the formula x ↦ a*x+b.
 
 # Constructors
 - `SpaceGroupElement{N,T}()`: The identity element of the space group.
-- `SpaceGroupElement{N,T}(t::SVector{N,T})`: A pure translation element of the space group.
-- `SpaceGroupElement{N,T}(m::SMatrix{N,N,T})`: A pure linear transformation element of the space group.
+- `SpaceGroupElement{N,T}(t::SVector{N,T})`: A pure lattice translation.
+- `SpaceGroupElement{N,T}(m::SMatrix{N,N,T})`: A pure linear transformation.
 
 # Example
-```julia
-julia> using StaticArrays
-
-julia> e1 = SpaceGroupElement{2,Int}(SMatrix{2,2,Int}([1 0; 0 1]))
-SpaceGroupElement{2,Int64}(
-  [1 0; 0 1],
-  [0, 0]
+```julia-repl
+julia> SpaceGroupElement{2, Int}()
+SpaceGroupElement(
+  a = [1 0; 0 1],
+  b = [0//1, 0//1]
 )
-
-julia> e2 = SpaceGroupElement{2,Int}(SVector{2,Int}([1, 1]))
-SpaceGroupElement{2,Int64}(
-  [1 0; 0 1],
-  [1, 1]
+```
+```julia-repl
+julia> SpaceGroupElement(SMatrix{2,2,Int}([0 1; -1 0]))
+SpaceGroupElement(
+  a = [0 1; -1 0],
+  b = [0//1, 0//1]
 )
-
-julia> e1*e2
-SpaceGroupElement{2,Int64}(
-  [1 0; 0 1],
-  [1, 1]
+```
+```julia-repl
+julia> SpaceGroupElement(SVector{2,Int}([1, 1]))
+SpaceGroupElement(
+  a = [1 0; 0 1],
+  b = [1//1, 1//1]
 )
-
-julia> e1∘e2
-SpaceGroupElement{2,Int64}(
-  [1 0; 0 1],
-  [0, 0]
-)
+```
 """
 struct SpaceGroupElement{N,T<:Integer} <: GroupElement
     a::SMatrix{N,N,T}
@@ -89,7 +82,7 @@ SpaceGroupElement{N,T}() where {N,T<:Integer} =
 """
     SpaceGroupElement{N,T}(t::SVector{N,T}) where {N, T<:Integer}
 
-Constructor with a translation vector argument, which creates a pure translation element of the space group.
+Constructor with a translation vector argument, which creates a pure lattice translation.
 
 # Arguments
 - `t::SVector{N,T}`: The translation vector.
@@ -134,6 +127,17 @@ Composition of two space group elements.
 
 # Returns
 - The composition of the two space group elements.
+
+# Example
+```julia-repl
+julia> e1 = @SGE([0 1; -1 0]);
+       e2 = @SGE([1//1, 1//1]);
+       e1*e2
+SpaceGroupElement(
+  a = [0 1; -1 0],
+  b = [1//1, -1//1]
+)
+```
 """
 function *(e1::SpaceGroupElement{N,T}, e2::SpaceGroupElement{N,T}) where {N,T<:Integer}
     SpaceGroupElement(e1.a*e2.a, e1.a*e2.b+e1.b)
@@ -142,15 +146,26 @@ end
 """
     ∘(e1::SpaceGroupElement{N,T}, e2::SpaceGroupElement{N,T}) where {N,T<:Integer}
 
-    Reduced composition of two space group elements. The translation vector of the result is brought 
-    inside the standard unit cell.
+Reduced composition of two space group elements. The translation vector of the result is brought 
+inside the standard unit cell.
 
-    # Arguments
-    - `e1::SpaceGroupElement{N,T}`: The first space group element.
-    - `e2::SpaceGroupElement{N,T}`: The second space group element.
+# Arguments
+- `e1::SpaceGroupElement{N,T}`: The first space group element.
+- `e2::SpaceGroupElement{N,T}`: The second space group element.
 
-    # Returns
-    - The reduced composition of the two space group elements.
+# Returns
+- The reduced composition of the two space group elements.
+
+# Example
+```julia-repl
+julia> e1 = @SGE([0 1; -1 0]);
+       e2 = @SGE([1//1, 1//1]);
+       e1∘e2
+SpaceGroupElement(
+  a = [0 1; -1 0],
+  b = [0//1, 0//1]
+)
+```
 """
 function ∘(e1::SpaceGroupElement{N,T}, e2::SpaceGroupElement{N,T}) where {N,T<:Integer}
     reduce(e1*e2)
@@ -158,32 +173,41 @@ end
 
 """
     @SGE(args...)
-    A macro for creating `SpaceGroupElement` objects.
-    It can take either one or two arguments:
-    - If two arguments are provided, the first should be a matrix and the second a vector.
-      The macro will create a `SpaceGroupElement` with the given matrix and vector.
-    - If one argument is provided, it can be either a matrix or a vector.
-      If it's a matrix, the macro will create a `SpaceGroupElement` with the identity matrix
-      and a zero vector. If it's a vector, the macro will create a `SpaceGroupElement` with
-      the identity matrix and the given vector.
-    The macro will check the dimensions and types of the inputs to ensure they are valid.
-    # Arguments
-    - `args...`: The arguments to be passed to the macro. It can be either one or two arguments.
-    # Returns
-    - A `SpaceGroupElement` object created from the provided arguments.
-    # Example
-    ```julia
-    julia> @SGE([1 0; 0 -1], [1//3, 2//3])
-    SpaceGroupElement{2, Int64}([1 0; 0 -1], Rational{Int64}[1//3, 2//3])
-    ```
-    ```julia
-    julia> @SGE([1 0; 0 -1])
-    SpaceGroupElement{2, Int64}([1 0; 0 -1], Rational{Int64}[0, 0])
-    ```
-    ```julia
-    julia> @SGE([1//3, 2//3])
-    SpaceGroupElement{2, Int64}([1 0; 0 1], Rational{Int64}[1//3, 2//3])
-    ```
+A macro for creating `SpaceGroupElement` objects.
+It can take either one or two arguments:
+- If two arguments are provided, the first should be a matrix and the second a vector.
+    The macro will create a `SpaceGroupElement` with the given matrix and vector.
+- If one argument is provided, it can be either a matrix or a vector.
+    If it's a matrix, the macro will create a `SpaceGroupElement` with the identity matrix
+    and a zero vector. If it's a vector, the macro will create a `SpaceGroupElement` with
+    the identity matrix and the given vector.
+The macro will check the dimensions and types of the inputs to ensure they are valid.
+# Arguments
+- `args...`: The arguments to be passed to the macro. It can be either one or two arguments.
+# Returns
+- A `SpaceGroupElement` object created from the provided arguments.
+# Example
+```julia-repl
+julia> @SGE([1 0; 0 -1], [1//3, 2//3])
+SpaceGroupElement(
+    a = [1 0; 0 -1],
+    b = [1//3, 2//3]
+)
+```
+```julia-repl
+julia> @SGE([1 0; 0 -1])
+SpaceGroupElement(
+    a = [1 0; 0 -1],
+    b = [0//1, 0//1]
+)
+```
+```julia-repl
+julia> @SGE([1//3, 2//3])
+SpaceGroupElement(
+    a = [1 0; 0 1],
+    b = [1//3, 2//3]
+)
+```
 """
 macro SGE(args...)
     if length(args) == 2
@@ -257,21 +281,72 @@ macro SGE(args...)
 end
 
 
+function Base.show(io::IO, ::MIME"text/plain", x::SpaceGroupElement)
+    print(io, "SpaceGroupElement(\n  a = ")
+    show(io, x.a)
+    print(io, ",\n  b = [")
+    for (i, val) in enumerate(x.b)
+        i > 1 && print(io, ", ")
+        print(io, val)  # print each Rational cleanly
+    end
+    print(io, "]\n)")
+end
 
+function Base.show(io::IO, x::SpaceGroupElement)
+    # Used inside arrays, logging, etc.
+    print(io, "SGE(")
+    show(io, x.a)
+    print(io, ", [")
+    for (i, val) in enumerate(x.b)
+        i > 1 && print(io, ", ")
+        print(io, val)  # print each Rational cleanly
+    end
+    print(io, "])")
+end
 
 
 
 """
     SpaceGroupQuotient{N,T} = FiniteGroup{SpaceGroupElement{N,T}}
 
-    The factor group of the space group with respect to the subgroup of pure translations.
-    This group is isomorphic to the point group of the space group, but the representation 
-    of its elements contains enough information to reconstruct the original space group. In 
-    particular, the representation of symmorphic and non-symmorphic space groups is different.
+The factor group of the space group with respect to the subgroup of pure translations.
+This group is isomorphic to the point group of the space group, but the representation 
+of its elements contains enough information to reconstruct the original space group. In 
+particular, the representation of symmorphic and non-symmorphic space groups is different.
 
-    # Type Parameters
-    - `N`: The dimension of the space.
-    - `T<:Integer`: The type of the elements in the transformation matrix and translation vector.
+# Type Parameters
+- `N`: The dimension of the space.
+- `T<:Integer`: The type of the elements in the transformation matrix and translation vector.
+
+# Constructors
+- SpaceGroupQuotient{N,T}(): Construct the trivial space group (P1) of dimension N 
+- SpaceGroupQuotient{N,T}(gen): Constructs the space group using the generating set `gen` 
+  (which should be an iterable of `SpaceGroupElement{N, T}`)
+
+# Examples
+```julia-repl
+julia> SpaceGroupQuotient{2, Int}()
+SpaceGroupQuotient (dimension 2, order 1)
+
+julia> g1=@SGE([-1 0; 0 -1])
+SpaceGroupElement(
+  a = [-1 0; 0 -1],
+  b = [0//1, 0//1]
+)
+
+julia> g2=@SGE([-1 0; 0 1], [1//2, 0//1])
+SpaceGroupElement(
+  a = [-1 0; 0 1],
+  b = [1//2, 0//1]
+)
+
+julia> p2mg=SpaceGroupQuotient([g1, g2])
+SpaceGroupQuotient (dimension 2, order 4)
+```
 """
 const SpaceGroupQuotient{N,T} = FiniteGroup{SpaceGroupElement{N,T}}
+
+function Base.show(io::IO, ::MIME"text/plain", G::SpaceGroupQuotient{N,T}) where {N,T}
+    print(io, "SpaceGroupQuotient (dimension $N, order $(length(G.e)))")
+end
 

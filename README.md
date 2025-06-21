@@ -1,53 +1,83 @@
 # SpaceGroups.jl
 
-**SpaceGroups.jl** is a lightweight Julia package for working with **crystallographic space groups in arbitrary dimensions**. It provides efficient data structures for handling crystallographic symmetry operations, emphasizing performance and minimal dependencies.
+**SpaceGroups.jl** is a lightweight Julia package for handling crystallographic symmetry operations in any spatial dimension.
 
 ---
 
-## Features
+## Design Principles
 
-- **Arbitrary-dimensional space groups**: Work with space groups in any dimension.
-- **Performance-focused**: Uses static arrays internally for speed and memory efficiency.
-- **Lightweight and self-contained**: Depends only on Julia's standard library.
-- **Numerical focus**: Optimized for numerical computations where performance and dimensional generality are essential. *Note*: This is not a symbolic algebra tool and does not aim to match the scope of packages like GAP.
-- **Custom integer types**: All types are parameterized by the underlying integer type (default: `Int`, but supports arbitrary-precision integers and other integer types).
+**SpaceGroups.jl** is built on the following principles:
 
----
+* **Lightweight and Self-Contained:** Depends only on Julia's standard library.
+* **Dimension-Agnostic:** All algorithms are designed to work generically in any dimension.
+* **Performance-Focused:** Uses `StaticArrays` under the hood.
+* **Exact Representation:** Symmetry operations are represented precisely using Julia's `Rational` type for fractional components, avoiding the inaccuracies of floating-point numbers.
+
+## What SpaceGroups.jl is Not
+
+* **It is not a computer algebra system.** For tasks like enumerating all non-equivalent space groups in a given dimension, established tools like GAP are more suitable.
+* **It is not a space group database.** If you need a comprehensive database of crystallographic space groups, consider such excellent packages as [Crystalline.jl](https://github.com/thchr/Crystalline.jl) or [Spglib.jl](https://github.com/singularitti/Spglib.jl).
 
 ## Core Concepts
 
 ### Space Group Quotient
 
-The central type in the package is `SpaceGroupQuotient`, representing the **quotient of a space group by its translational subgroup**. While this group is always isomorphic to the point group of the structure, the `SpaceGroupQuotient` retains sufficient information to **reconstruct the full space group** as a semidirect product.
+The central type in the package is `SpaceGroupQuotient`, which represents the quotient of a space group by its translational subgroup. While this group is always isomorphic to the point group of the structure, the `SpaceGroupQuotient` retains sufficient information to reconstruct the full space group.
 
-- Constructed from a list of generators.
-- **Eager instantiation**: Computes and stores the full set of group elements upon creation.
-  - ⚠️ *Note*: May be memory-intensive in high-dimensional settings.
+* **Construction:** A `SpaceGroupQuotient` is instantiated from its generators.
+* **Eager Instantiation:** The full set of group elements is computed and stored upon creation.
+    * ⚠️ **Note:** This approach may be memory-intensive in high-dimensional settings.
 
-### Wyckoff Position
+### Wyckoff Positions
 
-The package provides a dedicated type, `WyckoffPosition`, representing symmetry classes of atomic sites in a crystal structure.  
+The package provides a dedicated `WyckoffPosition` type to represent symmetry-equivalent classes of atomic sites within a crystal structure.
 
 Key functionalities include:
-- Applying space group operations to these sites.
-- Computing **site-symmetry groups**.
-- **Validating** Wyckoff positions against the space group.
+* Applying space group operations to sites.
+* Computing site-symmetry groups.
+* Validating that a Wyckoff position is compatible with a given space group.
 
 ### Bragg Peaks
 
-For a given point in the reciprocal lattice, the package determines whether it corresponds to:
-- A **Bragg peak** with an arbitrary phase.
-- A **Bragg peak** with a phase fixed up to a sign.
-- An **extinct peak** (forbidden by symmetry).
+For any given point in the reciprocal lattice, the package can analyze its symmetry orbit to determine whether it corresponds to:
+
+* A **Bragg peak** with an arbitrary phase.
+* A **Bragg peak** with a phase restricted to a sign difference.
+* An **extinct peak** (forbidden by symmetry).
 
 ---
 
+## Basic Usage
+
+Here is an example of defining a non-symmorphic primitive octagonal space group in 4D and checking for systematic extinctions:
+
+```julia-repl
+julia> using SpaceGroups
+
+# Define the generators for the space group
+julia> g1 = @SGE([0 0 0 -1; 1 0 0 0; 0 1 0 0; 0 0 1 0]);
+julia> g2 = @SGE([0 1 0 0; 1 0 0 0; 0 0 0 -1; 0 0 -1 0], [1//2, 1//2, 1//2, 1//2]);
+
+# Create the space group quotient
+julia> G = SpaceGroupQuotient([g1, g2])
+SpaceGroupQuotient (dimension 4, order 16)
+
+# A reflection with restricted phase
+julia> make_orbit([1, 1, 0, 0], G)
+RealOrbit with 8 elements
+
+# An extinct reflection
+julia> make_orbit([1, 0, 0, 0], G)
+ExtinctOrbit with 8 elements
+```
+
 ## Installation
 
-Until the package is officially registered, install it via the Julia `Pkg` REPL (press `]` in the Julia REPL to enter `Pkg` mode) with:
+This package is not yet in the official Julia General registry. You can install it using the `Pkg` REPL (press `]` in the Julia REPL to enter `Pkg` mode) with:
 
-```julia
-add https://github.com/pkfrance/SpaceGroups.jl
+```julia-repl
+julia> ]
+(@v1.10) pkg> add https://github.com/pkfrance/SpaceGroups.jl(https://github.com/pkfrance/SpaceGroups.jl)
 ```
 
 ## Documentation
