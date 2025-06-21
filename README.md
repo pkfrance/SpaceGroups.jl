@@ -8,7 +8,7 @@
 
 **SpaceGroups.jl** is built on the following principles:
 
-* **Lightweight and Self-Contained:** Depends only on Julia's standard library.
+* **Lightweight and Self-Contained:** Depends only on stable and popular Julia's packages.
 * **Dimension-Agnostic:** All algorithms are designed to work generically in any dimension.
 * **Performance-Focused:** Uses `StaticArrays` under the hood.
 * **Exact Representation:** Symmetry operations are represented precisely using Julia's `Rational` type for fractional components, avoiding the inaccuracies of floating-point numbers.
