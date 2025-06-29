@@ -347,6 +347,6 @@ SpaceGroupQuotient (dimension 2, order 4)
 const SpaceGroupQuotient{N,T} = FiniteGroup{SpaceGroupElement{N,T}}
 
 function Base.show(io::IO, ::MIME"text/plain", G::SpaceGroupQuotient{N,T}) where {N,T}
-    print(io, "SpaceGroupQuotient (dimension $N, order $(length(G.e)))")
+    print(io, "SpaceGroupQuotient (dimension $N, order $(length(G)))")
 end
 
