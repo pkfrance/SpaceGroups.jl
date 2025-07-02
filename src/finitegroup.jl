@@ -120,16 +120,25 @@ function OperationCache(G::FiniteGroup)
     OperationCache(tabmul, tabinv)
 end
 
-@inline _inv(g::E, G::FiniteGroup{E}) where E<:GroupElement = G.e[G._cache.oc.tabinv[G.d[g]]]
+function _ensure_cache(G::FiniteGroup{E}, field::Symbol, fieldtype::DataType) where E<:GroupElement
+    isnothing(getfield(G._cache, field)) || return nothing
+    lock(G._lock) do
+        isnothing(getfield(G._cache, field)) || return nothing
+        setfield!(G._cache, field, fieldtype(G))
+    end
+    nothing
+end
+
+@inline (_inv(g::E, G::FiniteGroup{E})::E) where E<:GroupElement = G.e[G._cache.oc.tabinv[G.d[g]]]
 
 function inv(g::E, G::FiniteGroup{E})::E where E<:GroupElement
-    isnothing(G._cache.oc) || return _inv(g, G)
-    lock(G._lock) do 
-        isnothing(G._cache.oc) || return _inv(g, G)
-        G._cache.oc = OperationCache(G)
-        return _inv(g, G)
-    end
+    _ensure_cache(G, :oc, OperationCache)
+    G.e[G._cache.oc.tabinv[G.d[g]]]
+end
 
+function _tabmul(G::FiniteGroup{E})::Matrix{Int} where E<:GroupElement
+    _ensure_cache(G, :oc, OperationCache)
+    G._cache.oc.tabmul
 end
 
 # Iteration
