@@ -60,9 +60,11 @@ Brings the translation vector of a space group element inside the standard unit 
 # Returns
 - A new `SpaceGroupElement` with the same linear transformation matrix and a reduced translation vector.
 """
-function reduce(g::SpaceGroupElement{N,T}) where{N, T<:Integer}
+reduce(g::SpaceGroupElement{N,T}) where{N, T<:Integer} =
     return SpaceGroupElement{N,T}(g.a, g.b-floor.(g.b))
-end
+
+identity(::Type{SpaceGroupElement{N,T}}) where{N, T<:Integer} = 
+    SpaceGroupElement(one(SMatrix{N,N,T}), zeros(SVector{N, Rational{T}}))
 
 """
     SpaceGroupElement{N,T}()
