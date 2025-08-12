@@ -1,6 +1,9 @@
 # SpaceGroups.jl
 
-**SpaceGroups.jl** is a lightweight Julia package for handling crystallographic symmetry operations in any spatial dimension.
+*A lightweight Julia package for handling crystallographic symmetry operations in any spatial dimension*
+
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://pkfrance.github.io/SpaceGroups.jl/stable/)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://pkfrance.github.io/SpaceGroups.jl/dev/)
 
 ---
 
@@ -8,7 +11,7 @@
 
 **SpaceGroups.jl** is built on the following principles:
 
-* **Lightweight and Self-Contained:** Depends only on Julia's standard library.
+* **Lightweight and Self-Contained:** Depends only on stable and popular Julia's packages.
 * **Dimension-Agnostic:** All algorithms are designed to work generically in any dimension.
 * **Performance-Focused:** Uses `StaticArrays` under the hood.
 * **Exact Representation:** Symmetry operations are represented precisely using Julia's `Rational` type for fractional components, avoiding the inaccuracies of floating-point numbers.
@@ -26,7 +29,7 @@ The central type in the package is `SpaceGroupQuotient`, which represents the qu
 
 * **Construction:** A `SpaceGroupQuotient` is instantiated from its generators.
 * **Eager Instantiation:** The full set of group elements is computed and stored upon creation.
-    * ⚠️ **Note:** This approach may be memory-intensive in high-dimensional settings.
+    * **Note:** This approach may be memory-intensive in high-dimensional settings.
 
 ### Wyckoff Positions
 
@@ -77,12 +80,9 @@ This package is not yet in the official Julia General registry. You can install 
 
 ```julia-repl
 julia> ]
-(@v1.10) pkg> add https://github.com/pkfrance/SpaceGroups.jl(https://github.com/pkfrance/SpaceGroups.jl)
+(@v1.10) pkg> add https://github.com/pkfrance/SpaceGroups.jl
 ```
 
-## Documentation
- - [DEV](https://pkfrance.github.io/SpaceGroups.jl/dev/): documentation for the development version.
- - STABLE: *work in progress", waiting for the first release.
 
 ## Contributing
 Contributions, bug reports, and feature suggestions are welcome! Feel free to open an issue or a pull request.
