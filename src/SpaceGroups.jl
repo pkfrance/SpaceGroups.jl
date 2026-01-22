@@ -14,5 +14,6 @@ include("finitegroup.jl")
 include("spacegroup.jl")
 include("wyckoff.jl")
 include("orbit.jl")
+include("snf.jl")
 
 end
