@@ -9,6 +9,7 @@ export WyckoffPosition, stabilizer_quotient, is_valid_wyckoff, normalize
 export AffinePhase, ComplexOrbit, RealOrbit, ExtinctOrbit, FormalOrbit, PhysicalOrbit
 export make_orbit
 
+include("macros.jl") # macros used internally in the package
 
 include("finitegroup.jl")
 include("spacegroup.jl")
