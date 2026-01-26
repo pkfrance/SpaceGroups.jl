@@ -12,7 +12,8 @@ export make_orbit
 include("macros.jl") # macros used internally in the package
 
 include("finitegroup.jl")
-include("spacegroup.jl")
+include("spacegroupelement.jl")
+include("spacegroupquotient.jl")
 include("wyckoff.jl")
 include("orbit.jl")
 
