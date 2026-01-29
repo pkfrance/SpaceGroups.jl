@@ -13,7 +13,7 @@ function get_elements(hall_number::Integer)::Vector{SpaceGroupElement{3,Int}}
 end
 
 function expand(G::SpaceGroupQuotient{N, T}, g::SpaceGroupElement{N, T}) where {N, T<:Integer}
-    SpaceGroupQuotient{N, T}(union(G.e, Set([g])))
+    SpaceGroupQuotient(collect(union(G.group.e, Set([g]))))
 end
 
 function greedy_generators(elements::Vector{SpaceGroupElement{3,Int}})::Vector{SpaceGroupElement{3,Int}}
@@ -26,7 +26,7 @@ function greedy_generators(elements::Vector{SpaceGroupElement{3,Int}})::Vector{S
         best_size=0
         for candidate in candidates
             G1=expand(G, candidate)
-            size=length(G1.e)
+            size=length(G1)
             if size>best_size
                 best_size=size
                 best_candidate=candidate
@@ -37,7 +37,7 @@ function greedy_generators(elements::Vector{SpaceGroupElement{3,Int}})::Vector{S
         # expand the group
         G=expand(G, best_candidate)
         # Remove the expanded group elements from the candidates
-        setdiff!(candidates, G.e)
+        setdiff!(candidates, G.group.e)
     end
     if length(G)>length(elements)
         error("Generated group is larger than the original group.")

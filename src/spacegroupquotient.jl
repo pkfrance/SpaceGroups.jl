@@ -48,6 +48,9 @@ function SpaceGroupQuotient(gen::AbstractVector{SpaceGroupElement{N,T}}) where {
     SpaceGroupQuotient{N, T}(group)
 end
 
+SpaceGroupQuotient(gen::AbstractSet{SpaceGroupElement{N,T}}) where {N,T<:Integer} =
+    SpaceGroupQuotient(collect(gen))
+
 @delegate SpaceGroupQuotient.group (Base.length, Base.iterate, Base.eltype)
 
 function Base.show(io::IO, ::MIME"text/plain", G::SpaceGroupQuotient{N,T}) where {N,T}
